@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chop etilmoqda...</title>
+</head>
+<body>
+    <h2 style="text-align:center; margin-top: 50px;">Printerga yuborilmoqda...</h2>
+    
+    <script>
+        // URL dan "data" qismini olish
+        const params = new URLSearchParams(window.location.search);
+        const rawData = params.get('data');
+
+        if (rawData) {
+            // RawBT tushunadigan formatni yasash
+            // Biz AppSheetdan tayyor HTML ni olib kelamiz
+            
+            // RawBT ga yuborish (Base64 shart emas, oddiy HTML yetadi)
+            // Lekin URL encoded bo'lishi kerak
+            const rawbtUrl = "rawbt:data:text/html;charset=utf-8," + rawData;
+
+            // Ilovani ochish
+            window.location.href = rawbtUrl;
+            
+            // 2 soniyadan keyin oynani yopish (ixtiyoriy)
+            setTimeout(function(){
+                // window.close(); 
+            }, 3000);
+        } else {
+            document.body.innerHTML = "<h1>Xatolik: Ma'lumot topilmadi</h1>";
+        }
+    </script>
+</body>
+</html>
