@@ -1,34 +1,237 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Chop etilmoqda...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sotuv Cheki</title>
+    <style>
+        /* 80mm Printer uchun maxsus o'lchamlar */
+        body {
+            width: 76mm; /* 80mm qog'oz uchun xavfsiz zona */
+            margin: 0 auto;
+            background: #fff;
+            font-family: 'Courier New', Courier, monospace; /* Chek shrifti */
+            font-size: 14px;
+            color: #000;
+        }
+        .container {
+            padding: 5px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info {
+            font-size: 12px;
+            text-align: left;
+        }
+        .dashed-line {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        th {
+            text-align: left;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+        }
+        td {
+            padding: 4px 0;
+            vertical-align: top;
+        }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        
+        .total-section {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .stats {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        
+        /* Ekranda ko'rinadigan, lekin printerda chiqmaydigan tugma */
+        .print-btn {
+            display: block;
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-bottom: 50px;
+        }
+        @media print {
+            .print-btn { display: none; }
+            body { margin: 0; }
+        }
+    </style>
 </head>
 <body>
-    <h2 style="text-align:center; margin-top: 50px;">Printerga yuborilmoqda...</h2>
-    
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <span class="logo">DO'KON NOMI</span>
+            <div style="font-size: 12px;">Tel: +998 90 123-45-67</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <div class="info">
+            <div id="checkDate">Sana: ...</div>
+            <div id="checkClient">Mijoz: ...</div>
+            <div id="checkId">ID: ...</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <!-- JADVAL -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%">#</th>
+                    <th style="width: 45%">Nomi</th>
+                    <th style="width: 15%">Soni</th>
+                    <th style="width: 35%" class="text-right">Jami</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- JavaScript mahsulotlarni shu yerga to'ldiradi -->
+            </tbody>
+        </table>
+
+        <div class="dashed-line"></div>
+
+        <!-- YAKUNIY QISM -->
+        <div class="total-section text-right">
+            JAMI: <span id="grandTotal">0</span>
+        </div>
+        
+        <div class="stats text-right">
+            ( <span id="totalTypes">0</span> xil, <span id="totalQty">0</span> dona )
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <div class="footer">
+            Xaridingiz uchun rahmat!<br>
+            Keling, yana kuting!
+        </div>
+
+        <!-- TUGMA -->
+        <button class="print-btn" onclick="window.print()">🖨️ CHOP ETISH</button>
+    </div>
+
     <script>
-        // URL dan "data" qismini olish
+        function formatMoney(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
+        // URL dan ma'lumotlarni o'qish
         const params = new URLSearchParams(window.location.search);
-        const rawData = params.get('data');
+        
+        // 1. AppSheetdan kelgan ma'lumotlarni olish
+        const rawItems = params.get('items');
+        const date = params.get('date');
+        const client = params.get('client');
+        const id = params.get('id');
 
-        if (rawData) {
-            // RawBT tushunadigan formatni yasash
-            // Biz AppSheetdan tayyor HTML ni olib kelamiz
-            
-            // RawBT ga yuborish (Base64 shart emas, oddiy HTML yetadi)
-            // Lekin URL encoded bo'lishi kerak
-            const rawbtUrl = "rawbt:data:text/html;charset=utf-8," + rawData;
+        let itemsData = [];
 
-            // Ilovani ochish
-            window.location.href = rawbtUrl;
-            
-            // 2 soniyadan keyin oynani yopish (ixtiyoriy)
-            setTimeout(function(){
-                // window.close(); 
-            }, 3000);
+        // 2. Agar ma'lumot bo'lmasa (Test rejim)
+        if (!rawItems) {
+            console.log("Ma'lumot yo'q, test rejimi yoqildi.");
+            itemsData = [
+                { name: "Coca Cola 1.5L", qty: 2, price: 12000, total: 24000 },
+                { name: "Oq non (Buxanka)", qty: 4, price: 3000, total: 12000 },
+                { name: "Snickers Super", qty: 1, price: 8000, total: 8000 },
+                { name: "Muzqaymoq Plombir", qty: 3, price: 5000, total: 15000 },
+                { name: "Juda uzun nomli mahsulot test uchun", qty: 1, price: 100000, total: 100000 }
+            ];
+            document.getElementById('checkDate').innerText = "Sana: " + new Date().toLocaleString();
+            document.getElementById('checkClient').innerText = "Mijoz: Test Mijoz";
+            document.getElementById('checkId').innerText = "ID: TEST-001";
         } else {
-            document.body.innerHTML = "<h1>Xatolik: Ma'lumot topilmadi</h1>";
+            // 3. AppSheet ma'lumotini parchalash (Format: Nom|Son|Narx|Jami~Nom|Son...)
+            document.getElementById('checkDate').innerText = "Sana: " + (date || "");
+            document.getElementById('checkClient').innerText = "Mijoz: " + (client || "");
+            document.getElementById('checkId').innerText = "ID: " + (id || "");
+
+            // Qatorlarni ajratamiz (~)
+            const rows = rawItems.split('~');
+            rows.forEach(row => {
+                if(row.trim() !== "") {
+                    // Ustunlarni ajratamiz (|)
+                    const cols = row.split('|');
+                    if(cols.length >= 4) {
+                        itemsData.push({
+                            name: cols[0],
+                            qty: parseFloat(cols[1]),
+                            price: parseFloat(cols[2]),
+                            total: parseFloat(cols[3])
+                        });
+                    }
+                }
+            });
+        }
+
+        // 4. Jadvalni chizish va hisoblash
+        const tbody = document.getElementById('tableBody');
+        let grandTotal = 0;
+        let totalQty = 0;
+        let totalTypes = 0;
+
+        itemsData.forEach((item, index) => {
+            grandTotal += item.total;
+            totalQty += item.qty;
+            totalTypes++;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>
+                    ${item.name}
+                    ${item.qty > 1 ? `<br><small style="color:#555">${item.qty} x ${formatMoney(item.price)}</small>` : ''}
+                </td>
+                <td class="text-center">${item.qty}</td>
+                <td class="text-right">${formatMoney(item.total)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // 5. Natijalarni yozish
+        document.getElementById('grandTotal').innerText = formatMoney(grandTotal) + " so'm";
+        document.getElementById('totalTypes').innerText = totalTypes;
+        document.getElementById('totalQty').innerText = totalQty;
+
+        // Agar haqiqiy ma'lumot bo'lsa, avtomatik print oynasini ochish
+        if (rawItems) {
+            setTimeout(() => {
+                window.print();
+            }, 1000);
         }
     </script>
 </body>
