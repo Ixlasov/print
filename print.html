@@ -236,6 +236,10 @@
         setTimeout(() => window.print(), 800);
 
     });
+            .catch(err => {
+    console.log(err);
+    alert(err);
+});
 
 } else {
             // TEST UCHUN (Agar ma'lumot kelmasa)
