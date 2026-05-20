@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="uz">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +9,37 @@
         /* --- SOZLAMALAR --- */
         @page {
             size: auto;
-            margin: 0mm; /* Printer qog'ozini tejash uchun */
+            margin: 0mm;
+            /* Printer qog'ozini tejash uchun */
         }
+
         body {
-            font-family: 'Courier New', Courier, monospace; /* Monospace - rasmiy chek shrifti */
-            width: 74mm; /* 80mm printer uchun xavfsiz zona */
+            font-family: 'Courier New', Courier, monospace;
+            /* Monospace - rasmiy chek shrifti */
+            width: 74mm;
+            /* 80mm printer uchun xavfsiz zona */
             margin: 0 auto;
             padding: 5px;
             background: #fff;
             color: #000;
-            font-size: 13px; /* O'qishga qulay o'lcham */
+            font-size: 13px;
+            /* O'qishga qulay o'lcham */
             line-height: 1.3;
         }
 
         /* --- STYLES --- */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .bold { font-weight: bold; }
-        
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
         /* Chiziqlar */
         .dashed-line {
             border-bottom: 1px dashed #000;
@@ -33,14 +47,23 @@
             width: 100%;
             height: 1px;
         }
+
         .double-line {
             border-bottom: 3px double #000;
             margin: 6px 0;
         }
 
         /* Header */
-        .store-name { font-size: 18px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
-        .contact { font-size: 12px; }
+        .store-name {
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .contact {
+            font-size: 12px;
+        }
 
         /* Sana va Mijoz qatori (Flexbox) */
         .info-row {
@@ -48,24 +71,72 @@
             justify-content: space-between;
             margin-bottom: 2px;
         }
-        .info-label { text-align: left; }
-        .info-value { text-align: right; font-weight: bold; }
+
+        .info-label {
+            text-align: left;
+        }
+
+        .info-value {
+            text-align: right;
+            font-weight: bold;
+        }
 
         /* Jadval */
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 13px; }
-        th { border-bottom: 1px dashed #000; text-align: left; padding: 4px 0; }
-        td { vertical-align: top; padding: 4px 0; }
-        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        th {
+            border-bottom: 1px dashed #000;
+            text-align: left;
+            padding: 4px 0;
+        }
+
+        td {
+            vertical-align: top;
+            padding: 4px 0;
+        }
+
         /* Jadval ustunlari kengligi */
-        .col-num { width: 8%; text-align: left; }
-        .col-name { width: 52%; text-align: left; padding-right: 2px; }
-        .col-data { width: 40%; text-align: right; }
+        .col-num {
+            width: 8%;
+            text-align: left;
+        }
+
+        .col-name {
+            width: 52%;
+            text-align: left;
+            padding-right: 2px;
+        }
+
+        .col-data {
+            width: 40%;
+            text-align: right;
+        }
 
         /* Yig'indilar */
-        .totals-section { margin-top: 5px; }
-        .total-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
-        .grand-total { font-size: 18px; font-weight: bold; padding: 5px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin: 5px 0; }
-        
+        .totals-section {
+            margin-top: 5px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+
+        .grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 5px 0;
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            margin: 5px 0;
+        }
+
         /* Footer statistikasi */
         .stats-footer {
             text-align: center;
@@ -76,115 +147,150 @@
 
         /* Print tugmasi */
         #printBtn {
-            display: block; width: 100%; padding: 15px; margin-top: 20px;
-            background: #000; color: #fff; border: none; font-size: 16px; cursor: pointer;
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: #000;
+            color: #fff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
         }
+
         @media print {
-            #printBtn { display: none; }
+            #printBtn {
+                display: none;
+            }
+        }
+
+        .loader {
+            width: 45px;
+            height: 45px;
+            border: 5px solid #ddd;
+            border-top: 5px solid #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div id="loading" style="
-    text-align:center;
-    padding:40px 10px;
+    <div id="loading" style="
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
     font-size:18px;
     font-weight:bold;
 ">
-    Yuklanmoqda...
-</div>
 
-<div id="pageBody" style="display:none;">
+        <div class="loader"></div>
 
-    <!-- HEADER -->
-    <div class="text-center">
-        <div class="store-name" id="storeName">DO'KON NOMI</div>
-        <div class="contact" id="storeInfo">
-            Manzil: Toshkent sh.<br>
-            Tel: +998 90 123-45-67
-        </div>
-    </div>
-
-    <div class="double-line"></div>
-
-    <!-- SANA VA MIJOZ (Talab 1: Qiymat o'ngda va qalin) -->
-    <div class="info-row">
-        <span class="info-label">Sana:</span>
-        <span class="info-value" id="tDate">...</span>
-    </div>
-    <div class="info-row">
-        <span class="info-label">Chek №:</span>
-        <span class="info-value" id="tId">...</span>
-    </div>
-    <div class="info-row">
-        <span class="info-label">Mijoz:</span>
-        <span class="info-value" id="tClient">...</span>
-    </div>
-
-    <div class="dashed-line"></div>
-
-    <!-- MAHSULOTLAR JADVALI -->
-    <table>
-        <thead>
-            <tr>
-                <th class="col-num">#</th>
-                <th class="col-name">Nomi</th>
-                <th class="col-data">Soni x Narx<br>= Jami</th>
-            </tr>
-        </thead>
-        <tbody id="itemsBody">
-            <!-- JS to'ldiradi -->
-        </tbody>
-    </table>
-
-    <div class="dashed-line"></div>
-    <div class="stats-footer">
-        Jami: <span id="statCount" class="bold">0</span> xil, 
-        <span id="statQty" class="bold">0</span> ta mahsulot
-    </div>
-    <div class="dashed-line"></div>
-
-    <!-- HISOB-KITOB -->
-    <div class="totals-section">
-        <div class="total-row">
-            <span>Jami summa:</span>
-            <span class="bold" id="tSubtotal">0</span>
-        </div>
-        <div class="total-row">
-            <span>Chegirma:</span>
-            <span id="tDiscount">0</span>
-        </div>
-        
-        <div class="total-row grand-total">
-            <span>TO'LOV:</span>
-            <span id="tTotal">0</span>
+        <div style="margin-top:15px;">
+            Yuklanmoqda...
         </div>
 
-        <div class="total-row">
-            <span>To'landi:</span>
-            <span id="tPaid">0</span>
-        </div>
-        <div class="total-row">
-            <span>Qarz:</span>
-            <span class="bold" id="tDebt">0</span>
-        </div>
     </div>
 
-    <!-- STATISTIKA (Talab 3: Nechta mahsulot va umumiy qty) -->
-    <div class="dashed-line"></div>
+    <div id="pageBody" style="display:none;">
 
-    <div class="text-center" style="margin-top: 15px; margin-bottom: 20px;">
-        *** Xaridingiz uchun rahmat! ***
-    </div>
+        <!-- HEADER -->
+        <div class="text-center">
+            <div class="store-name" id="storeName">DO'KON NOMI</div>
+            <div class="contact" id="storeInfo">
+                Manzil: Toshkent sh.<br>
+                Tel: +998 90 123-45-67
+            </div>
+        </div>
 
-    <button id="printBtn" onclick="window.print()">CHOP ETISH</button>
+        <div class="double-line"></div>
+
+        <!-- SANA VA MIJOZ (Talab 1: Qiymat o'ngda va qalin) -->
+        <div class="info-row">
+            <span class="info-label">Sana:</span>
+            <span class="info-value" id="tDate">...</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Chek №:</span>
+            <span class="info-value" id="tId">...</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Mijoz:</span>
+            <span class="info-value" id="tClient">...</span>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <!-- MAHSULOTLAR JADVALI -->
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-num">#</th>
+                    <th class="col-name">Nomi</th>
+                    <th class="col-data">Soni x Narx<br>= Jami</th>
+                </tr>
+            </thead>
+            <tbody id="itemsBody">
+                <!-- JS to'ldiradi -->
+            </tbody>
+        </table>
+
+        <div class="dashed-line"></div>
+        <div class="stats-footer">
+            Jami: <span id="statCount" class="bold">0</span> xil,
+            <span id="statQty" class="bold">0</span> ta mahsulot
+        </div>
+        <div class="dashed-line"></div>
+
+        <!-- HISOB-KITOB -->
+        <div class="totals-section">
+            <div class="total-row">
+                <span>Jami summa:</span>
+                <span class="bold" id="tSubtotal">0</span>
+            </div>
+            <div class="total-row">
+                <span>Chegirma:</span>
+                <span id="tDiscount">0</span>
+            </div>
+
+            <div class="total-row grand-total">
+                <span>TO'LOV:</span>
+                <span id="tTotal">0</span>
+            </div>
+
+            <div class="total-row">
+                <span>To'landi:</span>
+                <span id="tPaid">0</span>
+            </div>
+            <div class="total-row">
+                <span>Qarz:</span>
+                <span class="bold" id="tDebt">0</span>
+            </div>
+        </div>
+
+        <!-- STATISTIKA (Talab 3: Nechta mahsulot va umumiy qty) -->
+        <div class="dashed-line"></div>
+
+        <div class="text-center" style="margin-top: 15px; margin-bottom: 20px;">
+            *** Xaridingiz uchun rahmat! ***
+        </div>
+
+        <button id="printBtn" onclick="window.print()">CHOP ETISH</button>
     </div>
 
     <script>
         // 1000 lik ajratgich funksiyasi (12 000 ko'rinishida)
         function fmt(num) {
-            if(!num && num !== 0) return "0";
+            if (!num && num !== 0) return "0";
             return parseFloat(num).toLocaleString('uz-UZ').replace(/,/g, " ");
         }
 
@@ -192,8 +298,8 @@
         const saleId = params.get('sale_id');
 
         // Do'kon ma'lumotlari
-        if(params.get('store')) document.getElementById('storeName').innerText = params.get('store');
-        if(params.get('phone')) document.getElementById('storeInfo').innerHTML = (params.get('addr') || "") + "<br>" + "Tel: " + params.get('phone');
+        if (params.get('store')) document.getElementById('storeName').innerText = params.get('store');
+        if (params.get('phone')) document.getElementById('storeInfo').innerHTML = (params.get('addr') || "") + "<br>" + "Tel: " + params.get('phone');
 
         // Asosiy ma'lumotlar
         document.getElementById('tDate').innerText = params.get('date') || new Date().toLocaleString();
@@ -214,22 +320,22 @@
 
         if (saleId) {
 
-    fetch("https://script.google.com/macros/s/AKfycbwE181c0e9x4468QqUEFuY5Yz0RxqxNehZIJ_6_xocrQlufs6BlTHB9H8rXf3zstzPVXA/exec?sale_id=" + encodeURIComponent(saleId))
-    .then(res => res.json())
-    .then(rows => {
+            fetch("https://script.google.com/macros/s/AKfycbwE181c0e9x4468QqUEFuY5Yz0RxqxNehZIJ_6_xocrQlufs6BlTHB9H8rXf3zstzPVXA/exec?sale_id=" + encodeURIComponent(saleId))
+                .then(res => res.json())
+                .then(rows => {
 
-        rows.forEach((cols) => {
+                    rows.forEach((cols) => {
 
-            const qty = parseFloat(cols.qty);
-            const price = parseFloat(cols.price);
-            const total = parseFloat(cols.total);
+                        const qty = parseFloat(cols.qty);
+                        const price = parseFloat(cols.price);
+                        const total = parseFloat(cols.total);
 
-            totalQty += qty;
-            distinctItems++;
+                        totalQty += qty;
+                        distinctItems++;
 
-            const tr = document.createElement('tr');
+                        const tr = document.createElement('tr');
 
-            tr.innerHTML = `
+                        tr.innerHTML = `
                 <td class="col-num">${distinctItems}</td>
                 <td class="col-name">${cols.name}</td>
                 <td class="col-data">
@@ -238,22 +344,22 @@
                 </td>
             `;
 
-            tbody.appendChild(tr);
+                        tbody.appendChild(tr);
 
-        });
+                    });
 
-        document.getElementById('statCount').innerText = distinctItems;
-        document.getElementById('statQty').innerText = totalQty;
-    document.getElementById('loading').style.display = 'none';
-document.getElementById('pageBody').style.display = 'block';
-        setTimeout(() => window.print(), 800);
+                    document.getElementById('statCount').innerText = distinctItems;
+                    document.getElementById('statQty').innerText = totalQty;
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('pageBody').style.display = 'block';
+                    setTimeout(() => window.print(), 800);
 
-    })
-    .catch(err => {
-    document.getElementById('loading').innerText = 'Xatolik yuz berdi';
-    console.log(err);
-});
-} else {
+                })
+                .catch(err => {
+                    document.getElementById('loading').innerText = 'Xatolik yuz berdi';
+                    console.log(err);
+                });
+        } else {
             // TEST UCHUN (Agar ma'lumot kelmasa)
             tbody.innerHTML = `
                 <tr><td class="col-num">1</td><td class="col-name">Test Tovar A</td><td class="col-data">2 x 10 000<br><b>=20 000</b></td></tr>
@@ -269,4 +375,5 @@ document.getElementById('pageBody').style.display = 'block';
 
     </script>
 </body>
+
 </html>
