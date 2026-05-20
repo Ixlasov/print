@@ -177,7 +177,7 @@
         }
 
         const params = new URLSearchParams(window.location.search);
-        const rawItems = params.get('items');
+        const saleId = params.get('sale_id');
 
         // Do'kon ma'lumotlari
         if(params.get('store')) document.getElementById('storeName').innerText = params.get('store');
@@ -200,38 +200,44 @@
         let totalQty = 0;
         let distinctItems = 0;
 
-        if (rawItems) {
-            const rows = rawItems.split('~');
-            
-            rows.forEach((row, index) => { // 'index' bu yerda 0 dan boshlanadi
-                if(row.trim()) {
-                    const cols = row.split('|'); // Nom|Qty|Narx|Total
-                    if(cols.length >= 4) {
-                        const qty = parseFloat(cols[1]);
-                        const price = parseFloat(cols[2]);
-                        const total = parseFloat(cols[3]);
-                        
-                        // Statistikani hisoblash
-                        totalQty += qty;
-                        distinctItems++;
+        if (saleId) {
 
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td class="col-num">${distinctItems}</td> <!-- Talab 2: Avtomat raqam -->
-                            <td class="col-name">${cols[0]}</td>
-                            <td class="col-data">
-                                ${qty} x ${fmt(price)}<br>
-                                <span class="bold">=${fmt(total)}</span>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    }
-                }
-            });
-            
-            // Avtomatik chop etish
-            setTimeout(() => window.print(), 800);
-        } else {
+    fetch("https://script.google.com/macros/s/AKfycbwE181c0e9x4468QqUEFuY5Yz0RxqxNehZIJ_6_xocrQlufs6BlTHB9H8rXf3zstzPVXA/exec?sale_id=" + encodeURIComponent(saleId))
+    .then(res => res.json())
+    .then(rows => {
+
+        rows.forEach((cols) => {
+
+            const qty = parseFloat(cols.qty);
+            const price = parseFloat(cols.price);
+            const total = parseFloat(cols.total);
+
+            totalQty += qty;
+            distinctItems++;
+
+            const tr = document.createElement('tr');
+
+            tr.innerHTML = `
+                <td class="col-num">${distinctItems}</td>
+                <td class="col-name">${cols.name}</td>
+                <td class="col-data">
+                    ${qty} x ${fmt(price)}<br>
+                    <span class="bold">=${fmt(total)}</span>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+
+        });
+
+        document.getElementById('statCount').innerText = distinctItems;
+        document.getElementById('statQty').innerText = totalQty;
+
+        setTimeout(() => window.print(), 800);
+
+    });
+
+} else {
             // TEST UCHUN (Agar ma'lumot kelmasa)
             tbody.innerHTML = `
                 <tr><td class="col-num">1</td><td class="col-name">Test Tovar A</td><td class="col-data">2 x 10 000<br><b>=20 000</b></td></tr>
