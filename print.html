@@ -84,7 +84,16 @@
         }
     </style>
 </head>
-<body>
+<body style="display:none;" id="pageBody">
+
+    <div id="loading" style="
+    text-align:center;
+    padding:40px 10px;
+    font-size:18px;
+    font-weight:bold;
+">
+    Yuklanmoqda...
+</div>
 
     <!-- HEADER -->
     <div class="text-center">
@@ -232,15 +241,15 @@
 
         document.getElementById('statCount').innerText = distinctItems;
         document.getElementById('statQty').innerText = totalQty;
-
+    document.getElementById('loading').style.display = 'none';
+document.getElementById('pageBody').style.display = 'block';
         setTimeout(() => window.print(), 800);
 
     })
     .catch(err => {
-        console.log(err);
-        alert(err);
-    });
-
+    document.getElementById('loading').innerText = 'Xatolik yuz berdi';
+    console.log(err);
+});
 } else {
             // TEST UCHUN (Agar ma'lumot kelmasa)
             tbody.innerHTML = `
