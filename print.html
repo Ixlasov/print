@@ -11,7 +11,6 @@
             margin: 0mm; /* Printer qog'ozini tejash uchun */
         }
         body {
-            display:none;
             font-family: 'Courier New', Courier, monospace; /* Monospace - rasmiy chek shrifti */
             width: 74mm; /* 80mm printer uchun xavfsiz zona */
             margin: 0 auto;
@@ -85,9 +84,9 @@
         }
     </style>
 </head>
-<body id="pageBody">
+<body>
 
-    <div id="loading" style="
+<div id="loading" style="
     text-align:center;
     padding:40px 10px;
     font-size:18px;
@@ -95,6 +94,8 @@
 ">
     Yuklanmoqda...
 </div>
+
+<div id="pageBody" style="display:none;">
 
     <!-- HEADER -->
     <div class="text-center">
@@ -178,8 +179,11 @@
     </div>
 
     <button id="printBtn" onclick="window.print()">CHOP ETISH</button>
+    </div>
 
     <script>
+        document.getElementById('loading').style.display = 'none';
+document.getElementById('pageBody').style.display = 'block';
         // 1000 lik ajratgich funksiyasi (12 000 ko'rinishida)
         function fmt(num) {
             if(!num && num !== 0) return "0";
