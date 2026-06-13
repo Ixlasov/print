@@ -1,252 +1,354 @@
 <!DOCTYPE html>
 <html lang="uz">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chek</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chek</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body {
-    background: #e8e8e8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 16px 8px;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: 700;
-  }
+    body {
+      background: #e8e8e8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 16px 8px;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+    }
 
-  .loader-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    margin-top: 60px;
-  }
+    .loader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 60px;
+    }
 
- .comment-block {
-    margin: 10px 0;
-    padding: 5px;
-    font-style: italic;
-    text-align: center;
-    border-top: 1px dashed #ccc;
-    border-bottom: 1px dashed #ccc;
-}
-  .spinner {
-    width: 32px; height: 32px;
-    border: 3px solid #ccc;
-    border-top-color: #333;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text { font-size: 13px; color: #444; }
+    .comment-block {
+      margin: 10px 0;
+      padding: 5px;
+      font-style: italic;
+      text-align: center;
+      border-top: 1px dashed #ccc;
+      border-bottom: 1px dashed #ccc;
+    }
 
-  .error-box {
-    background: #fff0f0;
-    border: 1px solid #f99;
-    border-radius: 6px;
-    padding: 14px 18px;
-    color: #c00;
-    font-size: 13px;
-    text-align: center;
-    margin-top: 40px;
-    max-width: 300px;
-  }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #ccc;
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
 
-  .print-btn {
-    margin-bottom: 10px;
-    padding: 8px 20px;
-    background: #1a1a1a;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .print-btn:hover { background: #333; }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-  /* RECEIPT */
-  .receipt-wrapper {
-    background: #fff;
-    width: 302px;
-    padding: 10px 10px 10px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.4;
-    color: #000;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  }
+    .loader-text {
+      font-size: 13px;
+      color: #444;
+    }
 
-  .shop-name {
-    font-size: 16px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .shop-sub {
-    text-align: center;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-top: 1px;
-  }
+    .error-box {
+      background: #fff0f0;
+      border: 1px solid #f99;
+      border-radius: 6px;
+      padding: 14px 18px;
+      color: #c00;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 40px;
+      max-width: 300px;
+    }
 
-  .shop-company {
-    text-align: center;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-top: 1px;
-  }
+    .print-btn {
+      margin-bottom: 10px;
+      padding: 8px 20px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-  .divider-double { border: none; border-top: 2.5px double #000; margin: 5px 0; }
-  .divider        { border: none; border-top: 1px dashed #555;   margin: 4px 0; }
+    .print-btn:hover {
+      background: #333;
+    }
 
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    padding: 1px 0;
-  }
+    /* RECEIPT */
+    .receipt-wrapper {
+      /* Avvalgi font-smoothing o'chiriladi — bu asosiy sabab */
+      -webkit-font-smoothing: none;
+      -moz-osx-font-smoothing: unset;
+      font-smooth: never;
 
-  /* ITEMS — 2-line layout */
-  .item-block { padding: 3px 0; border-bottom: 1px dashed #bbb; }
-  .item-block:last-child { border-bottom: none; }
+      /* Termal printer tezligi uchun rendering */
+      text-rendering: optimizeSpeed;
+    }
 
-  .item-name {
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1.3;
-    word-break: break-word;
-    margin-bottom: 1px;
-  }
+    .receipt-wrapper {
+      font-weight: 400;
+      /* 700 emas! */
+    }
 
-  .item-detail {
-    display: flex;
-    margin-left: 20px;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 700;
-  }
-  .item-detail .d-left  { color: #333; }
-  .item-detail .d-price { text-align: center; }
-  .item-detail .d-total { text-align: right; }
+    .shop-name,
+    .grand-total,
+    .item-name {
+      font-weight: 900;
+      -webkit-text-stroke: 0.3px #000;
+      /* qirralar keskin bo'ladi */
+    }
 
-  .items-footer {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 0 1px;
-    border-top: 1px solid #000;
-    margin-top: 2px;
-  }
 
-  .sum-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 1px 0;
-  }
-  .sum-row.discount .val { color: #b91c1c; }
+    .shop-name {
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-  .grand-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 4px 0;
-    border-top: 2px solid #000;
-    border-bottom: 2px solid #000;
-    margin: 4px 0;
-  }
+    .shop-sub {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 1px;
+    }
 
-  .pay-section { margin-top: 3px; }
-  .pay-title { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
-  .pay-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; padding: 1px 0; }
+    .shop-company {
+      text-align: center;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 1px;
+    }
 
-  .credit-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 4px;
-    padding: 4px 6px;
-    border: 1.5px solid #d97706;
-    background: #fffbeb;
-  }
-  .credit-label { font-size: 10px; font-weight: 700; color: #92400e; }
-  .credit-amt   { font-size: 12px; font-weight: 700; color: #92400e; }
+    .divider-double {
+      border: none;
+      border-top: 2.5px double #000;
+      margin: 5px 0;
+    }
 
-  .footer {
-    text-align: center;
-    font-size: 10px;
-    font-weight: 700;
-    margin-top: 6px;
-    line-height: 1.6;
-  }
+    .divider {
+      border: none;
+      border-top: 1px dashed #555;
+      margin: 4px 0;
+    }
 
-  @media print {
-    body { background: none; padding: 0; }
-    .print-btn { display: none !important; }
-    .receipt-wrapper { box-shadow: none; width: 100%; padding: 3px 5px; }
-    @page { size: 80mm auto; margin: 2mm; }
-  }
-</style>
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 1px 0;
+    }
+
+    /* ITEMS — 2-line layout */
+    .item-block {
+      padding: 3px 0;
+      border-bottom: 1px dashed #bbb;
+    }
+
+    .item-block:last-child {
+      border-bottom: none;
+    }
+
+    .item-name {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+      word-break: break-word;
+      margin-bottom: 1px;
+    }
+
+    .item-detail {
+      display: flex;
+      margin-left: 20px;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .item-detail .d-left {
+      color: #333;
+    }
+
+    .item-detail .d-price {
+      text-align: center;
+    }
+
+    .item-detail .d-total {
+      text-align: right;
+    }
+
+    .items-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 0 1px;
+      border-top: 1px solid #000;
+      margin-top: 2px;
+    }
+
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 0;
+    }
+
+    .sum-row.discount .val {
+      color: #b91c1c;
+    }
+
+    .grand-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 4px 0;
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      margin: 4px 0;
+    }
+
+    .pay-section {
+      margin-top: 3px;
+    }
+
+    .pay-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .pay-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 0;
+    }
+
+    .credit-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      padding: 4px 6px;
+      border: 1.5px solid #d97706;
+      background: #fffbeb;
+    }
+
+    .credit-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #92400e;
+    }
+
+    .credit-amt {
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+
+      .print-btn {
+        display: none !important;
+      }
+
+      .receipt-wrapper {
+        -webkit-font-smoothing: none;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      @page {
+        size: 80mm auto;
+        margin: 2mm;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div id="app"></div>
-<script>
-  const API_BASE = "https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec";
+  <div id="app"></div>
+  <script>
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec"; // O'zingizning API endpoint manzilingizni kiriting
 
-  function fmt(n) { return Number(n||0).toLocaleString("uz-UZ"); }
+    function fmt(n) { return Number(n || 0).toLocaleString("uz-UZ"); }
 
-  function fmtDate(raw) {
-    if (!raw) return "";
-    const d = new Date(raw);
-    if (isNaN(d)) return String(raw);
-    const p = n => String(n).padStart(2,"0");
-    return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}  ${p(d.getHours())}:${p(d.getMinutes())}`;
-  }
+    function fmtDate(raw) {
+      if (!raw) return "";
+      const d = new Date(raw);
+      if (isNaN(d)) return String(raw);
+      const p = n => String(n).padStart(2, "0");
+      return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}  ${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
 
-  function accountLabel(type) {
-    const map = { cash:"Naqd pul", card:"Plastik karta", transfer:"Bank o'tkazma", credit:"Nasiya" };
-    return map[String(type).toLowerCase()] || type || "Boshqa";
-  }
+    function accountLabel(type) {
+      const map = { cash: "Naqd pul", card: "Plastik karta", transfer: "Bank o'tkazma", credit: "Nasiya" };
+      return map[String(type).toLowerCase()] || type || "Boshqa";
+    }
 
-  function fmtQ2(v) {
-    const n = Number(v||0);
-    return n % 1 === 0 ? n.toFixed(0) : n.toFixed(2);
-  }
+    function fmtQ2(v) {
+      const n = Number(v || 0);
+      return n % 1 === 0 ? n.toFixed(0) : n.toFixed(2);
+    }
 
-  function showLoader() {
-    document.getElementById("app").innerHTML = `
+    function showLoader() {
+      document.getElementById("app").innerHTML = `
       <div class="loader-wrap">
         <div class="spinner"></div>
         <div class="loader-text">Ma'lumot yuklanmoqda...</div>
       </div>`;
-  }
+    }
 
-  function showError(msg) {
-    document.getElementById("app").innerHTML = `<div class="error-box">⚠ ${msg}</div>`;
-  }
+    function showError(msg) {
+      document.getElementById("app").innerHTML = `<div class="error-box">⚠ ${msg}</div>`;
+    }
 
-  function renderReceipt(data) {
-    const s = data.sale;
-    const items = data.items || [];
-    const payments = data.payments || [];
-    const summary = data.summary || {};
+    function renderReceipt(data) {
+      const s = data.sale;
+      const items = data.items || [];
+      const payments = data.payments || [];
+      const summary = data.summary || {};
 
-    const itemBlocks = items.map((it, i) => `
+      const itemBlocks = items.map((it, i) => `
       <div class="item-block">
-        <div class="item-name">${i+1}. ${it.product_name || "—"}</div>
+        <div class="item-name">${i + 1}. ${it.product_name || "—"}</div>
         <div class="item-detail">
           <span class="d-left">${it.quantity_2 || "-"}</span>
           <span class="d-price">${fmt(it.price)} so'm</span>
@@ -254,43 +356,43 @@
         </div>
       </div>`).join("");
 
-    const payRows = payments.map(p => `
+      const payRows = payments.map(p => `
       <div class="pay-row">
         <span>${accountLabel(p.type)}</span>
         <span>${fmt(p.amount)} so'm</span>
       </div>`).join("");
 
-    const discountRow = Number(s.discount) ? `
+      const discountRow = Number(s.discount) ? `
       <div class="sum-row discount">
         <span>Chegirma:</span>
         <span class="val">- ${fmt(s.discount)} so'm</span>
       </div>` : "";
 
-    const refundRow = Number(s.refund_amount) ? `
+      const refundRow = Number(s.refund_amount) ? `
       <div class="sum-row discount">
         <span>Qaytarma:</span>
         <span class="val">- ${fmt(s.refund_amount)} so'm</span>
       </div>` : "";
 
-    const creditBlock = Number(s.credit_amount) ? `
+      const creditBlock = Number(s.credit_amount) ? `
       <div class="credit-block">
         <span class="credit-label">&#9651; NASIYA QOLDIG'I</span>
         <span class="credit-amt">${fmt(s.credit_amount)} so'm</span>
       </div>` : "";
 
-   const commentBlock = (s.comment && s.comment.trim() !== "") ? `
+      const commentBlock = (s.comment && s.comment.trim() !== "") ? `
       <div class="comment-block" style="margin-top: 10px; font-style: italic; font-size: 0.9em; text-align: center;">
         <strong>Izoh:</strong> ${s.comment}
       </div>` : "";
 
-    const html = `
+      const html = `
     <button class="print-btn" onclick="window.print()">&#128438; Chek chop etish</button>
     <div class="receipt-wrapper">
 
       <div class="shop-name">N18</div>
       <div class="shop-company">Taxiatosh Dehqon Bozori</div>
       <div class="shop-company">№ 18 - do'kon</div>
-      <div class="shop-company">+998990811653</div>
+      <div class="shop-company">+998 (99)-081-16-53</div>
       <div class="shop-sub">Savdo cheki</div>
 
       <hr class="divider-double">
@@ -303,7 +405,7 @@
       <div>${itemBlocks}</div>
 
       <div class="items-footer">
-        <span>Jami: ${summary.total_qty_1||0} / ${summary.total_qty_2||0} ta</span>
+        <span>Jami: ${summary.total_qty_1 || 0} / ${summary.total_qty_2 || 0} ta</span>
         <span>${fmt(s.total_amount)} so'm</span>
       </div>
 
@@ -336,26 +438,27 @@
 
     </div>`;
 
-    document.getElementById("app").innerHTML = html;
-    setTimeout(() => window.print(), 300);
-  }
-
-  async function init() {
-    const params = new URLSearchParams(window.location.search);
-    const saleId = params.get("sale_id") || params.get("id");
-    if (!saleId) { showError("URL da sale_id ko'rsatilmagan.<br>Misol: ?sale_id=123"); return; }
-    showLoader();
-    try {
-      const res = await fetch(`${API_BASE}?sale_id=${encodeURIComponent(saleId)}`);
-      const data = await res.json();
-      if (!data.success) { showError(data.message || "Ma'lumot topilmadi"); return; }
-      renderReceipt(data);
-    } catch(e) {
-      showError("Server bilan ulanishda xatolik.<br>" + e.message);
+      document.getElementById("app").innerHTML = html;
+      setTimeout(() => window.print(), 300);
     }
-  }
 
-  init();
-</script>
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const saleId = params.get("sale_id") || params.get("id");
+      if (!saleId) { showError("URL da sale_id ko'rsatilmagan.<br>Misol: ?sale_id=123"); return; }
+      showLoader();
+      try {
+        const res = await fetch(`${API_BASE}?sale_id=${encodeURIComponent(saleId)}`);
+        const data = await res.json();
+        if (!data.success) { showError(data.message || "Ma'lumot topilmadi"); return; }
+        renderReceipt(data);
+      } catch (e) {
+        showError("Server bilan ulanishda xatolik.<br>" + e.message);
+      }
+    }
+
+    init();
+  </script>
 </body>
+
 </html>
