@@ -26,6 +26,15 @@
     gap: 12px;
     margin-top: 60px;
   }
+
+ .comment-block {
+    margin: 10px 0;
+    padding: 5px;
+    font-style: italic;
+    text-align: center;
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+}
   .spinner {
     width: 32px; height: 32px;
     border: 3px solid #ccc;
@@ -269,6 +278,11 @@
         <span class="credit-amt">${fmt(s.credit_amount)} so'm</span>
       </div>` : "";
 
+   const commentBlock = (s.comment && s.comment.trim() !== "") ? `
+      <div class="comment-block" style="margin-top: 10px; font-style: italic; font-size: 0.9em; text-align: center;">
+        <strong>Izoh:</strong> ${s.comment}
+      </div>` : "";
+
     const html = `
     <button class="print-btn" onclick="window.print()">&#128438; Chek chop etish</button>
     <div class="receipt-wrapper">
@@ -311,6 +325,8 @@
       </div>` : ""}
 
       ${creditBlock}
+
+      ${commentBlock}
 
       <hr class="divider-double">
 
