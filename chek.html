@@ -238,7 +238,7 @@
 <div id="app"></div>
 
 <script>
-  const API_BASE = "https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec";
+  const API_BASE = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
 
   function fmt(n) {
     return Number(n || 0).toLocaleString("uz-UZ");
@@ -313,7 +313,7 @@
 
     <div class="receipt-wrapper">
 
-      <div class="shop-name">DO'KON NOMI</div>
+      <div class="shop-name">N18</div>
       <div class="shop-sub">Savdo cheki</div>
 
       <hr class="divider-double">
@@ -377,13 +377,12 @@
 
       <div class="footer">
         <div class="thank">Xaridingiz uchun rahmat!</div>
-        Tovar qaytarilmaydi va almashinmaydi<br>
-        Chek hujjat sifatida qabul qilinadi
       </div>
 
     </div>`;
 
     document.getElementById("app").innerHTML = html;
+    setTimeout(() => window.print(), 300);
   }
 
   async function init() {
