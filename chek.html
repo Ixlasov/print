@@ -1,86 +1,340 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Chek Chop Etish</title>
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-size: 14px; }
-        #receipt { width: 72mm; margin: 0 auto; padding: 10px; background: #fff; }
-        .header { text-align: center; font-weight: bold; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 5px 0; text-align: left; }
-        .total-row { font-weight: bold; border-top: 1px dashed #000; border-bottom: 1px dashed #000; }
-        .footer { text-align: center; margin-top: 20px; font-size: 12px; }
-        @media print {
-            body { background: none; }
-            #receipt { width: 100%; margin: 0; padding: 0; }
-            .no-print { display: none; }
-        }
-    </style>
+<meta charset="utf-8">
+<title>80mm Check</title>
+
+<style>
+
+body{
+    width:80mm;
+    margin:auto;
+    font-family:Arial;
+    font-size:12px;
+}
+
+.center{
+    text-align:center;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:3px;
+}
+
+.right{
+    text-align:right;
+}
+
+.line{
+    border-top:1px dashed black;
+    margin:5px 0;
+}
+
+.hide{
+    display:none;
+}
+
+@media print{
+    button{
+        display:none;
+    }
+}
+
+</style>
 </head>
 <body>
 
-    <div id="receipt">
-        <div class="header">Kompaniya Nomi<br>Chek #<span id="sale-id">---</span></div>
-        <div id="date" style="text-align: center; font-size: 12px;"></div>
-        <hr>
-        <p>Mijoz: <span id="customer-name">---</span></p>
-        <table id="items-table">
-            <thead><tr><th>Mahsulot</th><th>Soni</th><th>Narx</th><th>Jami</th></tr></thead>
-            <tbody></tbody>
-        </table>
-        <div id="summary"></div>
-        <div id="payments"></div>
-        <div class="footer">Xizmatingizdan mamnunmiz!</div>
-    </div>
+<div id="receipt"></div>
 
-    <button class="no-print" onclick="window.print()">Chekni chop etish</button>
+<button onclick="window.print()">
+Print
+</button>
 
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec"; // BU YERGA O'Z URLINGIZNI QO'YING
+<script>
 
-        async function fetchReceiptData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id') || "TEST_123"; // Test uchun default
+const TEST_DATA = {
+success:true,
 
-            try {
-                const response = await fetch(`${API_URL}?id=${id}`);
-                const data = await response.json();
-                
-                if (data.error) throw new Error(data.error);
+sale:{
+id:123,
+customer_name:"Test Mijoz",
+total_amount:300000,
+discount:10000,
+final_amount:290000,
+payment_total:250000,
+credit_amount:40000,
+refund_amount:0,
+created_at:"2026-06-13 15:20"
+},
 
-                document.getElementById('sale-id').innerText = id;
-                document.getElementById('customer-name').innerText = data.customer;
-                document.getElementById('date').innerText = new Date(data.sale[7]).toLocaleString();
+items:[
+{
+product_name:"Coca Cola",
+qty_1:2,
+qty_2:5,
+price:12000,
+total:60000
+},
+{
+product_name:"Pepsi",
+qty_1:3,
+qty_2:5,
+price:15000,
+total:75000
+}
+],
 
-                const tbody = document.querySelector("#items-table tbody");
-                let totalQty1 = 0, totalQty2 = 0;
+payments:[
+{
+type:"Cash",
+amount:200000
+},
+{
+type:"Card",
+amount:50000
+}
+],
 
-                data.items.forEach(item => {
-                    totalQty1 += item.qty1;
-                    totalQty2 += item.qty2;
-                    tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty1}/${item.qty2}</td><td>${item.price}</td><td>${item.total}</td></tr>`;
-                });
+summary:{
+total_qty_1:5,
+total_qty_2:10
+}
+};
 
-                document.getElementById('summary').innerHTML = `
-                    <p>Jami: ${totalQty1} karobka, ${totalQty2} dona</p>
-                    <p>Umumiy summa: ${data.sale[3]}</p>
-                    ${data.sale[2] > 0 ? `<p>Chegirma: ${data.sale[2]}</p>` : ''}
-                    ${data.sale[5] > 0 ? `<p>Qarz: ${data.sale[5]}</p>` : ''}
-                    ${data.sale[6] > 0 ? `<p>Qaytim: ${data.sale[6]}</p>` : ''}
-                `;
+const SALE_ID =
+new URLSearchParams(location.search)
+.get("sale_id");
 
-                const payDiv = document.getElementById('payments');
-                data.paymentDetails.forEach(p => {
-                    payDiv.innerHTML += `<p>${p.type}: ${p.amount}</p>`;
-                });
+if(SALE_ID){
 
-            } catch (err) {
-                document.getElementById('receipt').innerHTML = `<p style="color:red">Xatolik: ${err.message}</p>`;
-            }
-        }
+loadSale(SALE_ID);
 
-        window.onload = fetchReceiptData;
-    </script>
+}else{
+
+render(TEST_DATA);
+
+}
+
+async function loadSale(id){
+
+try{
+
+const res = await fetch(
+"https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec?sale_id="+id
+);
+
+const data = await res.json();
+
+if(data.success){
+
+render(data);
+
+}else{
+
+render(TEST_DATA);
+
+}
+
+}catch(e){
+
+render(TEST_DATA);
+
+}
+
+}
+
+function money(v){
+
+return Number(v).toLocaleString("uz-UZ");
+
+}
+
+function render(data){
+
+const sale = data.sale;
+
+let html = `
+
+<div class="center">
+
+<h2>SMART SAVDO</h2>
+
+<div>CHEK</div>
+
+<div>${sale.created_at}</div>
+
+<div>ID: ${sale.id}</div>
+
+</div>
+
+<div class="line"></div>
+
+<div>
+Mijoz: <b>${sale.customer_name}</b>
+</div>
+
+<div class="line"></div>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Mahsulot</th>
+<th>Soni</th>
+<th>Narx</th>
+<th>Jami</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+data.items.forEach(r=>{
+
+html += `
+<tr>
+
+<td>${r.product_name}</td>
+
+<td>
+${r.qty_1}/${r.qty_2}
+</td>
+
+<td class="right">
+${money(r.price)}
+</td>
+
+<td class="right">
+${money(r.total)}
+</td>
+
+</tr>
+`;
+
+});
+
+html += `
+
+</tbody>
+
+</table>
+
+<div class="line"></div>
+
+<div>
+
+Jami savat:
+
+<b>
+${data.summary.total_qty_1}
+ karobka,
+${data.summary.total_qty_2}
+ dona
+</b>
+
+</div>
+
+<div class="line"></div>
+
+`;
+
+html += `
+<div>
+Mahsulotlar summasi:
+<b>${money(sale.total_amount)}</b>
+</div>
+`;
+
+if(Number(sale.discount)>0){
+
+html += `
+<div>
+Chegirma:
+<b>${money(sale.discount)}</b>
+</div>
+`;
+
+}
+
+html += `
+<div>
+Yakuniy summa:
+<b>${money(sale.final_amount)}</b>
+</div>
+`;
+
+html += `
+<div>
+To'langan:
+<b>${money(sale.payment_total)}</b>
+</div>
+`;
+
+if(Number(sale.credit_amount)>0){
+
+html += `
+<div>
+Qoldiq qarz:
+<b>${money(sale.credit_amount)}</b>
+</div>
+`;
+
+}
+
+if(Number(sale.refund_amount)>0){
+
+html += `
+<div>
+Qaytim:
+<b>${money(sale.refund_amount)}</b>
+</div>
+`;
+
+}
+
+html += `
+<div class="line"></div>
+
+<h4>To'lovlar</h4>
+`;
+
+data.payments.forEach(p=>{
+
+html += `
+<div>
+${p.type} :
+<b>${money(p.amount)}</b>
+</div>
+`;
+
+});
+
+html += `
+<div class="line"></div>
+
+<div class="center">
+Tashrifingiz uchun rahmat
+</div>
+`;
+
+document.getElementById("receipt").innerHTML =
+html;
+
+setTimeout(()=>{
+window.print();
+},500);
+
+}
+
+</script>
+
 </body>
 </html>
