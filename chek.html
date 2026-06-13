@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Chek Chop Etish</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-size: 14px; }
+        #receipt { width: 72mm; margin: 0 auto; padding: 10px; background: #fff; }
+        .header { text-align: center; font-weight: bold; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 5px 0; text-align: left; }
+        .total-row { font-weight: bold; border-top: 1px dashed #000; border-bottom: 1px dashed #000; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; }
+        @media print {
+            body { background: none; }
+            #receipt { width: 100%; margin: 0; padding: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="receipt">
+        <div class="header">Kompaniya Nomi<br>Chek #<span id="sale-id">---</span></div>
+        <div id="date" style="text-align: center; font-size: 12px;"></div>
+        <hr>
+        <p>Mijoz: <span id="customer-name">---</span></p>
+        <table id="items-table">
+            <thead><tr><th>Mahsulot</th><th>Soni</th><th>Narx</th><th>Jami</th></tr></thead>
+            <tbody></tbody>
+        </table>
+        <div id="summary"></div>
+        <div id="payments"></div>
+        <div class="footer">Xizmatingizdan mamnunmiz!</div>
+    </div>
+
+    <button class="no-print" onclick="window.print()">Chekni chop etish</button>
+
+    <script>
+        const API_URL = "YOUR_APPS_SCRIPT_URL"; // BU YERGA O'Z URLINGIZNI QO'YING
+
+        async function fetchReceiptData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || "TEST_123"; // Test uchun default
+
+            try {
+                const response = await fetch(`${API_URL}?id=${id}`);
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error);
+
+                document.getElementById('sale-id').innerText = id;
+                document.getElementById('customer-name').innerText = data.customer;
+                document.getElementById('date').innerText = new Date(data.sale[7]).toLocaleString();
+
+                const tbody = document.querySelector("#items-table tbody");
+                let totalQty1 = 0, totalQty2 = 0;
+
+                data.items.forEach(item => {
+                    totalQty1 += item.qty1;
+                    totalQty2 += item.qty2;
+                    tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty1}/${item.qty2}</td><td>${item.price}</td><td>${item.total}</td></tr>`;
+                });
+
+                document.getElementById('summary').innerHTML = `
+                    <p>Jami: ${totalQty1} karobka, ${totalQty2} dona</p>
+                    <p>Umumiy summa: ${data.sale[3]}</p>
+                    ${data.sale[2] > 0 ? `<p>Chegirma: ${data.sale[2]}</p>` : ''}
+                    ${data.sale[5] > 0 ? `<p>Qarz: ${data.sale[5]}</p>` : ''}
+                    ${data.sale[6] > 0 ? `<p>Qaytim: ${data.sale[6]}</p>` : ''}
+                `;
+
+                const payDiv = document.getElementById('payments');
+                data.paymentDetails.forEach(p => {
+                    payDiv.innerHTML += `<p>${p.type}: ${p.amount}</p>`;
+                });
+
+            } catch (err) {
+                document.getElementById('receipt').innerHTML = `<p style="color:red">Xatolik: ${err.message}</p>`;
+            }
+        }
+
+        window.onload = fetchReceiptData;
+    </script>
+</body>
+</html>
