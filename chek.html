@@ -1,340 +1,374 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
-<meta charset="utf-8">
-<title>80mm Check</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chek</title>
 <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body{
-    width:80mm;
-    margin:auto;
-    font-family:Arial;
-    font-size:12px;
-}
+  body {
+    background: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+  }
 
-.center{
-    text-align:center;
-}
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-}
+  .controls input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 180px;
+  }
 
-th,td{
-    padding:3px;
-}
+  .controls button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
 
-.right{
-    text-align:right;
-}
+  #loadBtn { background: #2563eb; color: #fff; }
+  #printBtn { background: #16a34a; color: #fff; display: none; }
 
-.line{
-    border-top:1px dashed black;
-    margin:5px 0;
-}
+  #status {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 10px;
+    min-height: 18px;
+  }
 
-.hide{
-    display:none;
-}
+  .receipt-wrapper {
+    background: #fff;
+    width: 302px;
+    padding: 14px 12px;
+    font-size: 11px;
+    line-height: 1.55;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
 
-@media print{
-    button{
-        display:none;
+  .center { text-align: center; }
+  .bold { font-weight: 700; }
+  .right { text-align: right; }
+
+  .shop-name {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .divider-double {
+    border: none;
+    border-top: 2px solid #000;
+    margin: 6px 0;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px dashed #555;
+    margin: 6px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+
+  thead tr th {
+    font-weight: 700;
+    padding: 2px 2px;
+    border-bottom: 1px solid #000;
+    white-space: nowrap;
+  }
+
+  tbody tr td {
+    padding: 3px 2px;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) td {
+    background: #f8f8f8;
+  }
+
+  .col-name { width: 38%; word-break: break-word; }
+  .col-q1   { width: 12%; text-align: center; }
+  .col-q2   { width: 12%; text-align: center; }
+  .col-price{ width: 18%; text-align: right; }
+  .col-total{ width: 20%; text-align: right; }
+
+  .summary-table {
+    width: 100%;
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  .summary-table td { padding: 2px 0; }
+  .summary-table .label { color: #333; }
+  .summary-table .value { text-align: right; font-weight: 600; }
+
+  .grand-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 5px 0;
+    border-top: 2px solid #000;
+    margin-top: 4px;
+  }
+
+  .payments {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+
+  .payment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+
+  .badge-credit {
+    display: inline-block;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #92400e;
+  }
+
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 2px 0;
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: #666;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  @media print {
+    body {
+      background: none;
+      padding: 0;
     }
-}
-
+    .controls, #status { display: none !important; }
+    .receipt-wrapper {
+      box-shadow: none;
+      width: 100%;
+      max-width: 302px;
+      margin: 0;
+      padding: 6px 8px;
+    }
+    @page {
+      size: 80mm auto;
+      margin: 4mm;
+    }
+  }
 </style>
 </head>
 <body>
 
-<div id="receipt"></div>
+<div class="controls">
+  <input type="text" id="saleIdInput" placeholder="Sale ID kiriting..." />
+  <button id="loadBtn" onclick="loadReceipt()">Yuklash</button>
+  <button id="printBtn" onclick="window.print()">🖨️ Chop etish</button>
+</div>
+<div id="status"></div>
 
-<button onclick="window.print()">
-Print
-</button>
+<div id="receiptArea"></div>
 
 <script>
-
-const TEST_DATA = {
-success:true,
-
-sale:{
-id:123,
-customer_name:"Test Mijoz",
-total_amount:300000,
-discount:10000,
-final_amount:290000,
-payment_total:250000,
-credit_amount:40000,
-refund_amount:0,
-created_at:"2026-06-13 15:20"
-},
-
-items:[
-{
-product_name:"Coca Cola",
-qty_1:2,
-qty_2:5,
-price:12000,
-total:60000
-},
-{
-product_name:"Pepsi",
-qty_1:3,
-qty_2:5,
-price:15000,
-total:75000
-}
-],
-
-payments:[
-{
-type:"Cash",
-amount:200000
-},
-{
-type:"Card",
-amount:50000
-}
-],
-
-summary:{
-total_qty_1:5,
-total_qty_2:10
-}
-};
-
-const SALE_ID =
-new URLSearchParams(location.search)
-.get("sale_id");
-
-if(SALE_ID){
-
-loadSale(SALE_ID);
-
-}else{
-
-render(TEST_DATA);
-
-}
-
-async function loadSale(id){
-
-try{
-
-const res = await fetch(
-"https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec?sale_id="+id
-);
-
-const data = await res.json();
-
-if(data.success){
-
-render(data);
-
-}else{
-
-render(TEST_DATA);
-
-}
-
-}catch(e){
-
-render(TEST_DATA);
-
-}
-
-}
-
-function money(v){
-
-return Number(v).toLocaleString("uz-UZ");
-
-}
-
-function render(data){
-
-const sale = data.sale;
-
-let html = `
-
-<div class="center">
-
-<h2>SMART SAVDO</h2>
-
-<div>CHEK</div>
-
-<div>${sale.created_at}</div>
-
-<div>ID: ${sale.id}</div>
-
-</div>
-
-<div class="line"></div>
-
-<div>
-Mijoz: <b>${sale.customer_name}</b>
-</div>
-
-<div class="line"></div>
-
-<table>
-
-<thead>
-
-<tr>
-<th>Mahsulot</th>
-<th>Soni</th>
-<th>Narx</th>
-<th>Jami</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-`;
-
-data.items.forEach(r=>{
-
-html += `
-<tr>
-
-<td>${r.product_name}</td>
-
-<td>
-${r.qty_1}/${r.qty_2}
-</td>
-
-<td class="right">
-${money(r.price)}
-</td>
-
-<td class="right">
-${money(r.total)}
-</td>
-
-</tr>
-`;
-
-});
-
-html += `
-
-</tbody>
-
-</table>
-
-<div class="line"></div>
-
-<div>
-
-Jami savat:
-
-<b>
-${data.summary.total_qty_1}
- karobka,
-${data.summary.total_qty_2}
- dona
-</b>
-
-</div>
-
-<div class="line"></div>
-
-`;
-
-html += `
-<div>
-Mahsulotlar summasi:
-<b>${money(sale.total_amount)}</b>
-</div>
-`;
-
-if(Number(sale.discount)>0){
-
-html += `
-<div>
-Chegirma:
-<b>${money(sale.discount)}</b>
-</div>
-`;
-
-}
-
-html += `
-<div>
-Yakuniy summa:
-<b>${money(sale.final_amount)}</b>
-</div>
-`;
-
-html += `
-<div>
-To'langan:
-<b>${money(sale.payment_total)}</b>
-</div>
-`;
-
-if(Number(sale.credit_amount)>0){
-
-html += `
-<div>
-Qoldiq qarz:
-<b>${money(sale.credit_amount)}</b>
-</div>
-`;
-
-}
-
-if(Number(sale.refund_amount)>0){
-
-html += `
-<div>
-Qaytim:
-<b>${money(sale.refund_amount)}</b>
-</div>
-`;
-
-}
-
-html += `
-<div class="line"></div>
-
-<h4>To'lovlar</h4>
-`;
-
-data.payments.forEach(p=>{
-
-html += `
-<div>
-${p.type} :
-<b>${money(p.amount)}</b>
-</div>
-`;
-
-});
-
-html += `
-<div class="line"></div>
-
-<div class="center">
-Tashrifingiz uchun rahmat
-</div>
-`;
-
-document.getElementById("receipt").innerHTML =
-html;
-
-setTimeout(()=>{
-window.print();
-},500);
-
-}
-
+  const API_BASE = "https://script.google.com/macros/s/AKfycbwbVJxAcFnjM5Q7v-yq-NkrZTyk1tcZIMUkvxdCp-J4ICPn-Ro1ueF_MX4l2jhk_vKTfA/exec";
+
+  function setStatus(msg, isError) {
+    const el = document.getElementById("status");
+    el.textContent = msg;
+    el.style.color = isError ? "#dc2626" : "#555";
+  }
+
+  function fmt(n) {
+    return Number(n || 0).toLocaleString("uz-UZ");
+  }
+
+  function accountLabel(type) {
+    const map = {
+      "cash": "Naqd",
+      "card": "Karta",
+      "transfer": "O'tkazma",
+      "credit": "Nasiya",
+    };
+    return map[String(type).toLowerCase()] || type || "Boshqa";
+  }
+
+  async function loadReceipt() {
+    const saleId = document.getElementById("saleIdInput").value.trim();
+    if (!saleId) { setStatus("Sale ID kiriting!", true); return; }
+
+    setStatus("Yuklanmoqda...");
+    document.getElementById("printBtn").style.display = "none";
+    document.getElementById("receiptArea").innerHTML = "";
+
+    try {
+      const url = `${API_BASE}?sale_id=${encodeURIComponent(saleId)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (!data.success) {
+        setStatus(data.message || "Xatolik yuz berdi", true);
+        return;
+      }
+
+      setStatus("");
+      document.getElementById("printBtn").style.display = "inline-block";
+      renderReceipt(data);
+    } catch(e) {
+      setStatus("Server bilan bog'lanishda xatolik: " + e.message, true);
+    }
+  }
+
+  function renderReceipt(data) {
+    const s = data.sale;
+    const items = data.items || [];
+    const payments = data.payments || [];
+    const summary = data.summary || {};
+
+    const itemRows = items.map((it, i) => `
+      <tr>
+        <td class="col-name">${i+1}. ${it.product_name || "-"}</td>
+        <td class="col-q1">${it.qty_1}</td>
+        <td class="col-q2">${it.qty_2}</td>
+        <td class="col-price">${fmt(it.price)}</td>
+        <td class="col-total">${fmt(it.total)}</td>
+      </tr>
+    `).join("");
+
+    const paymentRows = payments.map(p => `
+      <div class="payment-row">
+        <span>${accountLabel(p.type)}</span>
+        <span><b>${fmt(p.amount)}</b> so'm</span>
+      </div>
+    `).join("");
+
+    const html = `
+    <div class="receipt-wrapper" id="receipt">
+
+      <div class="shop-name">DO'KON NOMI</div>
+      <div class="center" style="font-size:10px;color:#555;">Chek #${s.id}</div>
+
+      <hr class="divider-double">
+
+      <table style="width:100%;font-size:11px;margin-bottom:4px;">
+        <tr>
+          <td class="label" style="color:#555;">Mijoz:</td>
+          <td style="text-align:right;font-weight:700;">${s.customer_name}</td>
+        </tr>
+      </table>
+
+      <hr class="divider">
+
+      <table>
+        <thead>
+          <tr>
+            <th class="col-name" style="text-align:left;">Mahsulot</th>
+            <th class="col-q1">Dona</th>
+            <th class="col-q2">kg</th>
+            <th class="col-price" style="text-align:right;">Narx</th>
+            <th class="col-total" style="text-align:right;">Jami</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemRows}
+          <tr style="border-top:1px solid #ccc;">
+            <td class="col-name" style="font-weight:700;">JAMI:</td>
+            <td class="col-q1" style="text-align:center;font-weight:700;">${summary.total_qty_1 || 0}</td>
+            <td class="col-q2" style="text-align:center;font-weight:700;">${summary.total_qty_2 || 0}</td>
+            <td class="col-price"></td>
+            <td class="col-total" style="text-align:right;font-weight:700;">${fmt(s.total_amount)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr class="divider">
+
+      <table class="summary-table">
+        <tr>
+          <td class="label">Umumiy summa:</td>
+          <td class="value">${fmt(s.total_amount)} so'm</td>
+        </tr>
+        ${s.discount ? `
+        <tr>
+          <td class="label">Chegirma:</td>
+          <td class="value" style="color:#dc2626;">- ${fmt(s.discount)} so'm</td>
+        </tr>` : ""}
+        ${s.refund_amount ? `
+        <tr>
+          <td class="label">Qaytarma:</td>
+          <td class="value" style="color:#dc2626;">- ${fmt(s.refund_amount)} so'm</td>
+        </tr>` : ""}
+      </table>
+
+      <div class="grand-total">
+        <span>TO'LOV:</span>
+        <span>${fmt(s.final_amount)} so'm</span>
+      </div>
+
+      ${payments.length ? `
+      <hr class="divider">
+      <div style="font-weight:700;font-size:11px;margin-bottom:3px;">To'lov usullari:</div>
+      <div class="payments">${paymentRows}</div>
+      ` : ""}
+
+      ${s.credit_amount ? `
+      <hr class="divider">
+      <div class="payment-row">
+        <span class="badge-credit">⚠ NASIYA</span>
+        <span style="font-weight:700;color:#92400e;">${fmt(s.credit_amount)} so'm</span>
+      </div>
+      ` : ""}
+
+      <hr class="divider-double">
+
+      <div class="footer">
+        Xaridingiz uchun rahmat!<br>
+        Chek amal qiladi ✓
+      </div>
+
+    </div>`;
+
+    document.getElementById("receiptArea").innerHTML = html;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const idFromUrl = params.get("sale_id") || params.get("id");
+  if (idFromUrl) {
+    document.getElementById("saleIdInput").value = idFromUrl;
+    loadReceipt();
+  }
 </script>
-
 </body>
 </html>
