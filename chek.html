@@ -203,12 +203,27 @@
 
     .item-detail {
       display: flex;
+      flex-direction: column;
       margin-left: var(--item-indent, 12px);
-      justify-content: space-between;
-      gap: 4px;
       font-size: 0.92em;
       font-weight: 700;
       font-family: 'Courier New', Courier, monospace;
+    }
+
+    .d-left {
+      text-align: left;
+      margin-bottom: 1px;
+    }
+    
+    .d-right {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+    
+    .d-price,
+    .d-total {
+      white-space: nowrap;
     }
 
     .item-detail .d-left { flex: 1; min-width: 0; word-break: break-word; }
@@ -426,9 +441,12 @@
         <div class="item-block">
           <div class="item-name">${i + 1}. ${it.product_name || '—'}</div>
           <div class="item-detail">
-            <span class="d-left">${it.quantity_2 || '-'}</span><br/>
-            <span class="d-price">${fmt(it.price)} so'm</span> - 
-            <span class="d-total">${fmt(it.total)}</span>
+              <div class="d-left">${it.quantity_2 || '-'}</div>
+          
+              <div class="d-right">
+                  <span class="d-price">${fmt(it.price)} so'm</span> -
+                  <span class="d-total">${fmt(it.total)} so'm</span>
+              </div>
           </div>
 
         </div>`).join(''); 
