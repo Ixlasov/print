@@ -14,6 +14,27 @@
       font-smooth: never;
     }
 
+    /* Asosiy konteynerni flexbox qilamiz va elementlarni ustun shaklida joylaymiz */
+.item-detail {
+  display: flex;
+  flex-direction: column; 
+  gap: 4px; /* Qatorlar orasidagi masofa */
+}
+
+/* Miqdor (qty) turadigan joy (chap tomon) */
+.d-left {
+  text-align: left;
+}
+
+/* Narx va jami summani o'ng tomonga surish va bir qatorga terish */
+.price-wrapper {
+  display: flex;
+  justify-content: flex-end; /* Hammasini o'ng tomonga taqaydi */
+  align-items: center;
+  gap: 6px; /* Narx, chiziqcha va jami orasidagi masofa */
+  width: 100%;
+}
+
     body {
       background: #e8e8e8;
       display: flex;
@@ -425,9 +446,13 @@
         <div class="item-block">
           <div class="item-name">${i + 1}. ${it.product_name || '—'}</div>
           <div class="item-detail">
-            <div class="d-left">Miqdor: ${it.quantity_2 || '-'}</div>
-            <div class="d-price">Narxi: ${fmt(it.price)} so'm</div>
-            <div class="d-total">Jami: ${fmt(it.total)}</div>
+            <div class="d-left">${it.quantity_2 || '-'}</div>
+            
+            <div class="price-wrapper">
+              <span class="d-price">${fmt(it.price)} so'm</span>
+              <span class="d-dash">-</span>
+              <span class="d-total">${fmt(it.total)}</span>
+            </div>
           </div>
         </div>`).join('');
 
